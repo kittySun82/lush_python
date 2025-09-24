@@ -13,6 +13,74 @@ class TaskType:
     created_at: datetime
     updated_at: datetime
 
+
+
+# ----------------- Queries -----------------
+    
+# GraphQL Query class with database error handling
+@strawberry.type
+class Query:
+    # list all tasks order by its id
+    @strawberry.field
+    def all_tasks(self) -> List[TaskType]:
+            db = SessionLocal()
+            try:
+                tasks = db.query(Task).order_by(Task.id).all()
+                return tasks
+            except SQLAlchemyError as e:
+                print(f"Database error: {e}")
+                raise Exception("Failed to fetch tasks from the database.")
+            finally:
+                db.close()
+
+    
+    @strawberry.field
+    def task(self, id: int) -> Optional[TaskType]:
+        """Fetches a single task by its ID."""
+        db = SessionLocal()
+        try:
+           
+            task = db.query(Task).filter(Task.id == id).first()
+            return task
+        except SQLAlchemyError as e:
+            print(f"Database error: {e}")
+            raise Exception("Failed to fetch task from the database.")
+        finally:
+            db.close()
+            
+    
+    @strawberry.field
+    def tasks_by_completion(self, completed: bool) -> List[TaskType]:
+        """Fetches all tasks based on their completion status."""
+        db = SessionLocal()
+        try:
+            tasks = db.query(Task).filter(Task.completed == completed).all()
+            return tasks
+        except SQLAlchemyError as e:
+            print(f"Database error: {e}")
+            raise Exception("Failed to fetch tasks by completion status.")
+        finally:
+            db.close()
+
+
+    @strawberry.field
+    def search_tasks(self, search_term: str) -> List[TaskType]:
+        """Fetches tasks where the title contains the search term."""
+        db = SessionLocal()
+        try:
+            tasks = db.query(Task).filter(
+                Task.title.like(f"%{search_term}%")
+            ).all()
+            return tasks
+        except SQLAlchemyError as e:
+            print(f"Database error: {e}")
+            raise Exception("Failed to search tasks.")
+        finally:
+            db.close()
+
+
+            
+
 # ----------------- Mutations -----------------
 @strawberry.type
 class Mutation:
@@ -53,7 +121,7 @@ class Mutation:
             raise Exception(f"Failed to toggle task with ID {id}.")
         finally:
             db.close()
-            
+
 
     #   Deletes a task by its ID
     @strawberry.mutation
@@ -75,47 +143,7 @@ class Mutation:
     
     
 
-# GraphQL Query class with database error handling
-@strawberry.type
-class Query:
-    @strawberry.field
-    def all_tasks(self) -> List[TaskType]:
-            db = SessionLocal()
-            try:
-                tasks = db.query(Task).order_by(Task.id).all()
-                return tasks
-            except SQLAlchemyError as e:
-                print(f"Database error: {e}")
-                raise Exception("Failed to fetch tasks from the database.")
-            finally:
-                db.close()
 
-    @strawberry.field
-    def task(self, id: int) -> Optional[TaskType]:
-        """Fetches a single task by its ID."""
-        db = SessionLocal()
-        try:
-           
-            task = db.query(Task).filter(Task.id == id).first()
-            return task
-        except SQLAlchemyError as e:
-            print(f"Database error: {e}")
-            raise Exception("Failed to fetch task from the database.")
-        finally:
-            db.close()
-    
-    @strawberry.field
-    def tasks_by_completion(self, completed: bool) -> List[TaskType]:
-        """Fetches all tasks based on their completion status."""
-        db = SessionLocal()
-        try:
-            tasks = db.query(Task).filter(Task.completed == completed).all()
-            return tasks
-        except SQLAlchemyError as e:
-            print(f"Database error: {e}")
-            raise Exception("Failed to fetch tasks by completion status.")
-        finally:
-            db.close()
 
 # Create the GraphQL schema
 schema = strawberry.Schema(query=Query,mutation=Mutation)
