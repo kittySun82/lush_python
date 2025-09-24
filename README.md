@@ -43,3 +43,86 @@ Visit http://127.0.0.1:8000/docs in your browser to access the Swagger documenta
 Visit http://127.0.0.1:8000/graphql in your browser to access the GraphQL Playground.
 
 ### Examples of GraphQL Queries
+
+#### Get Tasks Data
+query
+query {
+  allTasks {
+    id
+    title
+    completed
+    createdAt
+    updatedAt
+  }
+
+
+  task(id:1) {
+    id
+    title
+    completed
+    createdAt
+    updatedAt
+  }
+  tasksByCompletion(completed:true) {
+    id
+    title
+    completed
+    createdAt
+    updatedAt
+  }
+}
+#### Resposnse:
+{
+  "data": {
+    "allTasks": [{
+        "id": 1,
+        "title": "Pack at least 300 Scooby as gift ",
+        "completed": true,
+        "createdAt": "2025-09-22T19:51:53.854048",
+        "updatedAt": "2025-09-23T20:26:37.694131"
+      },
+      {
+        "id": 2,
+        "title": "Make 100 Hello kitty bath ball ",
+        "completed": false,
+        "createdAt": "2025-09-22T19:53:28.664727",
+        "updatedAt": "2025-09-22T19:53:28.664733"
+      },
+      {
+        "id": 3,
+        "title": "Produce 10 kg Citric",
+        "completed": false,
+        "createdAt": "2025-09-23T20:25:21.012303",
+        "updatedAt": "2025-09-23T20:25:21.012308"
+      }
+    ],
+    "task": {
+      "id": 1,
+      "title": "Pack at least 300 Scooby as gift ",
+      "completed": true,
+      "createdAt": "2025-09-22T19:51:53.854048",
+      "updatedAt": "2025-09-23T20:26:37.694131"
+    },
+    "tasksByCompletion": [{
+        "id": 1,
+        "title": "Pack at least 300 Scooby as gift ",
+        "completed": true,
+        "createdAt": "2025-09-22T19:51:53.854048",
+        "updatedAt": "2025-09-23T20:26:37.694131"
+      }
+    ]
+  }
+}
+mutation
+
+mutation{
+  deleteTask(id:5){
+    id
+    title
+    completed
+    createdAt
+    updatedAt
+  }
+  
+  
+}
