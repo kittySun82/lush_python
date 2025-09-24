@@ -45,6 +45,7 @@ Visit http://127.0.0.1:8000/graphql in your browser to access the GraphQL Playgr
 ### Examples of GraphQL Queries
 
 #### Get Tasks Data
+```graphql
 query
 query {
   allTasks {
@@ -71,7 +72,10 @@ query {
     updatedAt
   }
 }
-#### Resposnse:
+
+```
+#### Response:
+```
 {
   "data": {
     "allTasks": [{
@@ -113,16 +117,81 @@ query {
     ]
   }
 }
-mutation
 
+``` 
+### Mutation:
+#### modify the data
+``` graphql
+mutation
 mutation{
-  deleteTask(id:5){
+  addTask(title:"Make 200 scooby bath ball"){
     id
     title
     completed
     createdAt
     updatedAt
   }
-  
-  
+  toggleTask(id:4){
+    id
+    title
+    completed
+    createdAt
+    updatedAt 
+  }
+  deleteTask(id:4){
+    id
+    title
+    completed
+    createdAt
+    updatedAt     
+  }
 }
+``` 
+####  Response:
+``` 
+{
+  "data": {
+    "addTask": {
+      "id": 4,
+      "title": "Make 200 scooby bath ball",
+      "completed": false,
+      "createdAt": "2025-09-24T16:16:17.158299",
+      "updatedAt": "2025-09-24T16:16:17.158304"
+    }
+    "toggleTask": {
+      "id": 4,
+      "title": "Make 200 scooby bath ball",
+      "completed": true,
+      "createdAt": "2025-09-24T16:16:17.158299",
+      "updatedAt": "2025-09-24T16:23:13.941113"
+    },
+    "deleteTask": {
+      "id": 4,
+      "title": "Make 200 scooby bath ball",
+      "completed": true,
+      "createdAt": "2025-09-24T16:16:17.158299",
+      "updatedAt": "2025-09-24T16:23:13.941113"
+    }
+  }
+}
+```
+
+### Addtional Error handling
+#### Business Logic Errors: 
+Examples include attempting to delete/modify a task that doesn't exist or adding a task with an empty title.
+
+#### Validation Errors: 
+The input data fails to meet the schema's requirements (e.g., providing an id as a string instead of an integer).
+
+#### Database Errors:
+These are issues at the data layer, such as a database connection failure, can't find tasks table, a unique constraint violation, or a transaction deadlock.
+
+#### Authentication/Authorization Errors: 
+The user does not have permission to perform an action.
+
+All these specific error types can be catches by creating custom, domain-specific exceptions.
+
+### Addtional Queues
+Like I have already added in the codes, tasks can not only be fetched by its id, but also by its completed status, search words in title or specified date. 
+
+
